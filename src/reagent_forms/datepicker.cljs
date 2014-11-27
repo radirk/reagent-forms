@@ -1,13 +1,37 @@
 (ns reagent-forms.datepicker
    (:require
    [clojure.string :as s]
-   [reagent.core :as reagent :refer [atom]]))
+   [reagent.core :as reagent :refer [atom]]
+   [goog.i18n.DateTimeFormat :as dtf]
+   ))
 
 (def dates
   {:days ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday" "Sunday"]
    :days-short ["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"]
    :months ["January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December"]
    :month-short ["Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"]})
+
+(def date-format-map
+  (let [f goog.i18n.DateTimeFormat.Format]
+    {:full-date (.-FULL_DATE f)
+     :full-datetime (.-FULL_DATETIME f)
+     :full-time (.-FULL_TIME f)
+     :long-date (.-LONG_DATE f)
+     :long-datetime (.-LONG_DATETIME f)
+     :long-time (.-LONG_TIME f)
+     :medium-date (.-MEDIUM_DATE f)
+     :medium-datetime (.-MEDIUM_DATETIME f)
+     :medium-time (.-MEDIUM_TIME f)
+     :short-date (.-SHORT_DATE f)
+     :short-datetime (.-SHORT_DATETIME f)
+     :short-time (.-SHORT_TIME f)}))
+
+(defn format-date-goog
+  "Formats date using either build-in date format passed as keyword or format string passed as string, based on the current locale. See http://docs.closure-library.googlecode.com/git/class_goog_i18n_DateTimeFormat.html for more info. Pattern specifications are as in Java, see http://docs.closure-library.googlecode.com/git/local_closure_goog_i18n_datetimeformat.js.source.html."
+  [{:keys [year month day]} date-format]
+  (.format (goog.i18n.DateTimeFormat.
+            (or ((keyword date-format) date-format-map) date-format))
+           (js/Date. year month day)))
 
 (defn split-parts [fmt separator]
   (vec
@@ -80,7 +104,7 @@
      (.setMonth month)
      (.setDate 1))))
 
-(defn gen-days [[year month] get save!]
+(defn gen-days [[year month] get save! expanded?]
   (let [num-days (days-in-month year month)
         last-month-days (if (pos? month) (days-in-month year (dec month)))
         first-day (first-day-of-week year month)]
@@ -99,7 +123,10 @@
                       (when (= doc-date date) "active"))
              :on-click #(if (= (get) date)
                           (save! nil)
-                          (save! date))}
+                          (do 
+                          (save! date)
+                          (swap! expanded? not)
+                          ))}
             day])
          :else
          [:td.day.new
@@ -140,4 +167,4 @@
            [:th.dow "Th"]
            [:th.dow "Fr"]
            [:th.dow "Sa"]]]
-        (into [:tbody] (gen-days @date get save!))]])))
+        (into [:tbody] (gen-days @date get save! expanded?))]])))

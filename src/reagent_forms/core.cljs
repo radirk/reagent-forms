@@ -117,7 +117,7 @@
          [:input.form-control
           {:read-only true
            :type :text
-           :value (when-let [date (get id)] (format-date date fmt))}]
+           :value (when-let [date (get id)] (format-date date date-format))}]
          [:span.input-group-addon
           {:on-click #(swap! expanded? not)}
           [:i.glyphicon.glyphicon-calendar]]]
