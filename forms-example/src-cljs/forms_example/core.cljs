@@ -9,7 +9,7 @@
    [:div.col-md-5 input]])
 
 (defn radio [label id name value]
-  [:div.radio
+  [:div.form-check
    [:label
     [:input {:field :radio :id id :name name :value value}]
     label]])
@@ -81,15 +81,15 @@
 
    [:h3 "multi-select buttons"]
    [:div.btn-group {:field :multi-select :id :every.position}
-    [:button.btn.btn-default {:key :left} "Left"]
-    [:button.btn.btn-default {:key :middle} "Middle"]
-    [:button.btn.btn-default {:key :right} "Right"]]
+    [:button.btn.btn-secondary {:key :left} "Left"]
+    [:button.btn.btn-secondary {:key :middle} "Middle"]
+    [:button.btn.btn-secondary {:key :right} "Right"]]
 
    [:h3 "single-select buttons"]
    [:div.btn-group {:field :single-select :id :unique.position}
-    [:button.btn.btn-default {:key :left} "Left"]
-    [:button.btn.btn-default {:key :middle} "Middle"]
-    [:button.btn.btn-default {:key :right} "Right"]]
+    [:button.btn.btn-secondary {:key :left} "Left"]
+    [:button.btn.btn-secondary {:key :middle} "Middle"]
+    [:button.btn.btn-secondary {:key :right} "Right"]]
 
    [:h3 "single-select list"]
    [:div.list-group {:field :single-select :id :pick-one}
@@ -135,7 +135,7 @@
           (when (and (some #{id} [:height :weight]) weight height)
             (assoc document :bmi (/ weight (* height height)))))]
 
-       [:button.btn.btn-default
+       [:button.btn.btn-secondary
          {:on-click
           #(if (empty? (get-in @doc [:person :first-name]))
              (swap! doc assoc-in [:errors :first-name]"first name is empty"))}
