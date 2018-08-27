@@ -1,4 +1,4 @@
-(ns reagent-forms.core
+(ns reagent-forms-radirk.core
   (:require-macros
     [reagent-forms-radirk.macros
      :refer [render-element]])
